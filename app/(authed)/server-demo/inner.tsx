@@ -1,15 +1,15 @@
 "use client";
 
 import { Preloaded, useMutation, usePreloadedQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 
 export default function Home({
   preloaded,
 }: {
-  preloaded: Preloaded<typeof api.myFunctions.listNumbers>;
+  preloaded: Preloaded<typeof api.public.numbers.listNumbers>;
 }) {
   const data = usePreloadedQuery(preloaded);
-  const addNumber = useMutation(api.myFunctions.addNumber);
+  const addNumber = useMutation(api.authed.numbers.addNumber);
   return (
     <>
       <div className="flex flex-col gap-4 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 p-6 rounded-xl shadow-md">

@@ -10,9 +10,11 @@
 
 import type * as authed_demo from "../authed/demo.js";
 import type * as authed_helpers from "../authed/helpers.js";
-import type * as myFunctions from "../myFunctions.js";
+import type * as authed_numbers from "../authed/numbers.js";
+import type * as authed_users from "../authed/users.js";
 import type * as private_demo from "../private/demo.js";
 import type * as private_helpers from "../private/helpers.js";
+import type * as public_numbers from "../public/numbers.js";
 
 import type {
   ApiFromModules,
@@ -23,9 +25,11 @@ import type {
 declare const fullApi: ApiFromModules<{
   "authed/demo": typeof authed_demo;
   "authed/helpers": typeof authed_helpers;
-  myFunctions: typeof myFunctions;
+  "authed/numbers": typeof authed_numbers;
+  "authed/users": typeof authed_users;
   "private/demo": typeof private_demo;
   "private/helpers": typeof private_helpers;
+  "public/numbers": typeof public_numbers;
 }>;
 
 /**

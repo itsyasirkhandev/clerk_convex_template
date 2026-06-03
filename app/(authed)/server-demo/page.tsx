@@ -4,7 +4,7 @@ import { api } from "@/convex/_generated/api";
 import Image from "next/image";
 
 export default async function ServerPage() {
-  const preloaded = await preloadQuery(api.myFunctions.listNumbers, {
+  const preloaded = await preloadQuery(api.public.numbers.listNumbers, {
     count: 3,
   });
 

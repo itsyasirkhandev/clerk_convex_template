@@ -1,0 +1,55 @@
+# Project Context — Jobly Job
+
+A convention-heavy starter template for building real apps.
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend framework | Next.js (App Router) |
+| Backend / database | Convex |
+| Auth provider | Firebase Auth (Google OAuth) |
+| State management | Zustand with Immer + Persist |
+| Backend effects | Effect-TS (structured logging, typed errors) |
+| Styling | Tailwind CSS |
+| Icons | Phosphor Icons |
+| Testing | Vitest + convex-test + @testing-library/react |
+
+## Domain Glossary
+
+| Term | Definition |
+|------|------------|
+| **Viewer** | The currently authenticated user, derived server-side from the JWT token |
+| **User** | A Convex document in the `users` table, synced from the Firebase identity |
+| **Number** | A demo entity stored in Convex — represents any simple data record |
+| **Auth Guard** | A `customCtxAndArgs` wrapper that validates the JWT and injects `ctx.identity` |
+| **Authed function** | A Convex query/mutation/action protected by the auth guard (client-facing) |
+| **Private function** | A Convex function protected by an API key guard (server-to-server) |
+
+## Conventions
+
+### Route Groups
+- `(public)` — Routes accessible without authentication (landing page)
+- `(authed)` — Routes requiring Firebase authentication (dashboard, features)
+
+### Convex Function Organization
+- `convex/authed/` — Client-facing functions protected by Firebase JWT
+- `convex/private/` — Server-to-server functions protected by API key
+- Each feature gets its own file (e.g., `numbers.ts`, `users.ts`)
+- Demo files (`demo.ts`) are kept as AI-readable convention references
+
+### Component Organization
+- `components/auth/` — Authentication-related UI (AuthGuard, UserProfile)
+- `components/providers/` — Context providers (ConvexClientProvider)
+- `components/skeletons/` — Loading skeleton components
+- `components/ui/` — Shared UI primitives
+
+### State Management
+- Zustand for client UI state (theme, sidebar)
+- Convex for server state (all business data)
+- Never duplicate server state in Zustand
+
+### Effect-TS Usage
+- Used in Convex handlers for structured logging
+- Use `Effect.runPromise(Effect.logInfo(...))` pattern for logging inside async handlers
+- Do NOT wrap Convex db calls inside Effect.gen generators (they need async/await)
