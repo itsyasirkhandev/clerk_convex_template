@@ -1,21 +1,20 @@
-import { 
-  getAuth, 
-  onIdTokenChanged, 
-  User, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
+import {
+  onIdTokenChanged,
+  User,
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut,
-  getRedirectResult
+  getRedirectResult,
 } from "firebase/auth";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import app from "../firebaseConfig";
+import { getFirebaseAuth } from "../lib/auth";
 
 export default function useFirebaseAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth(app);
+    const auth = getFirebaseAuth();
 
     // Capture and handle the result of the redirect flow on mount
     getRedirectResult(auth)
@@ -45,7 +44,7 @@ export default function useFirebaseAuth() {
   );
 
   const loginWithGoogle = useCallback(async () => {
-    const auth = getAuth(app);
+    const auth = getFirebaseAuth();
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
     try {
@@ -56,7 +55,7 @@ export default function useFirebaseAuth() {
   }, []);
 
   const logout = useCallback(async () => {
-    const auth = getAuth(app);
+    const auth = getFirebaseAuth();
     try {
       await signOut(auth);
     } catch (error) {
@@ -76,3 +75,4 @@ export default function useFirebaseAuth() {
     [isLoading, user, fetchAccessToken, loginWithGoogle, logout]
   );
 }
+

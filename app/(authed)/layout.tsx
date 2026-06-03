@@ -103,7 +103,16 @@ function Header() {
 
       <div className="flex items-center gap-3">
         <ThemeToggle />
-        {user && <UserProfile user={user} onLogout={logout} />}
+        {user && (
+          <UserProfile
+            viewer={{
+              displayName: user.displayName,
+              email: user.email,
+              photoURL: user.photoURL,
+            }}
+            onLogout={logout}
+          />
+        )}
       </div>
     </header>
   );

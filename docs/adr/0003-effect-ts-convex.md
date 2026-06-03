@@ -1,7 +1,7 @@
 # ADR 0003: Effect-TS in Convex function handlers
 
-**Status**: Accepted  
-**Date**: 2025-01-01
+**Status**: Updated (supersedes original v3 constraint)  
+**Date**: 2025-01-01 (revised 2026-06)
 
 ## Context
 
@@ -9,38 +9,51 @@ Convex function handlers are plain async functions. We need structured logging a
 
 ## Decision
 
-We use **Effect-TS** inside Convex handlers for structured logging.
+We use **Effect-TS v4** inside Convex handlers for structured logging and typed error pipelines.
 
-## Rationale
-
-- **Structured logging**: `Effect.logInfo(...)` provides structured, traceable log output
-- **Typed errors**: `Schema.TaggedErrorClass` enables typed error channels (future use)
-- **Composable**: Effect pipelines can add retry, timeout, and tracing to operations
-- **Convention teaching**: Shows the Effect pattern for AI agents and developers to learn from
+The canonical pattern is `Effect.gen + Effect.tryPromise` for all async work — including `ctx.db` calls.
 
 ## Pattern
 
 ```typescript
 export const myMutation = authedMutation({
   args: { value: v.number() },
-  handler: async (ctx, args) => {
-    // Effect for structured logging
-    await Effect.runPromise(
-      Effect.logInfo(`Operation for: ${ctx.identity.name}`)
-    );
-    // Plain await for Convex db calls
-    await ctx.db.insert('table', { value: args.value });
-  }
+  handler: async (ctx, args) => Effect.runPromise(
+    Effect.gen(function* () {
+      yield* Effect.logInfo(`Operation for: ${ctx.identity.name}`);
+
+      // Convex db calls are wrapped in Effect.tryPromise
+      yield* Effect.tryPromise(() =>
+        ctx.db.insert('table', { value: args.value })
+      );
+    })
+  ),
 });
 ```
 
-## Important constraint
+## Why Effect.gen + tryPromise is safe with Convex (v4)
 
-- Do NOT wrap Convex `ctx.db` calls inside `Effect.gen(function*() { ... })` — the generator is not async and cannot use `await`
-- Use `Effect.runPromise(Effect.logInfo(...))` for logging, keep db calls as plain `await`
+In Effect v4, `yield* Effect.tryPromise(fn)` is the standard way to lift an async function
+into the Effect world. The generator suspends at each `yield*`, awaiting the underlying
+promise through Effect's runtime — not through a raw `await`. Convex's reactive system
+sees a single top-level `Effect.runPromise(...)` call and a returned `Promise`, which is
+all it needs. There is no conflict with Convex's transaction semantics.
+
+> **Previous constraint (now retired)**: The original ADR said "Do NOT wrap Convex db calls
+> inside Effect.gen". This was based on Effect v2/v3 generator semantics where
+> `Effect.gen(function*() {...})` was not async-capable in the same way.
+> In Effect v4 this is no longer a concern.
+
+## Rationale
+
+- **Structured logging**: `Effect.logInfo(...)` provides structured, traceable log output
+- **Typed errors**: `Schema.TaggedErrorClass` enables typed error channels
+- **Uniform style**: all async work (logging AND db calls) goes through `yield*` — one mental model
+- **Convention teaching**: one consistent pattern for AI agents and developers to learn from
 
 ## Consequences
 
 - `effect` is a production dependency
-- Every Convex function file imports `Effect` from `effect`
-- The pattern is intentionally simple to serve as a teaching example
+- Every Convex function handler uses `Effect.gen + Effect.runPromise`
+- Demo files (`authed/demo.ts`, `private/demo.ts`) show the same pattern as real feature files
+

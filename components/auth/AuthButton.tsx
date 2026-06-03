@@ -1,13 +1,10 @@
 "use client"
 
-import { useAppStore } from "@/store"
+import useFirebaseAuth from "@/hooks/useFirebaseAuth"
 import { Button } from "@/components/ui/button"
 
 export function AuthButton() {
-  const user = useAppStore((state) => state.user)
-  const isLoading = useAppStore((state) => state.isLoading)
-  const loginWithGoogle = useAppStore((state) => state.loginWithGoogle)
-  const logout = useAppStore((state) => state.logout)
+  const { user, isLoading, loginWithGoogle, logout } = useFirebaseAuth()
 
   if (user) {
     return (
@@ -28,3 +25,4 @@ export function AuthButton() {
     </Button>
   )
 }
+

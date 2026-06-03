@@ -1,21 +1,27 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { User } from "firebase/auth";
 import Image from "next/image";
-import { 
-  SignOut, 
-  EnvelopeSimple, 
+import {
+  SignOut,
+  EnvelopeSimple,
   CaretDown,
-  ShieldCheck 
+  ShieldCheck
 } from "@phosphor-icons/react";
 
+// Only the display fields this module actually reads — Firebase type stays outside.
+export interface ViewerDisplay {
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+}
+
 interface UserProfileProps {
-  user: User;
+  viewer: ViewerDisplay;
   onLogout: () => void;
 }
 
-export default function UserProfile({ user, onLogout }: UserProfileProps) {
+export default function UserProfile({ viewer, onLogout }: UserProfileProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -33,9 +39,9 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
     };
   }, [isOpen]);
 
-  const initials = user.displayName
-    ? user.displayName.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase()
-    : user.email ? user.email.substring(0, 2).toUpperCase() : "U";
+  const initials = viewer.displayName
+    ? viewer.displayName.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase()
+    : viewer.email ? viewer.email.substring(0, 2).toUpperCase() : "U";
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -44,11 +50,11 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
         className="flex items-center gap-2.5 pl-2.5 pr-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-all duration-200 cursor-pointer group shadow-sm active:scale-[0.98]"
         aria-label="User profile menu"
       >
-        {user.photoURL ? (
+        {viewer.photoURL ? (
           <div className="relative w-7 h-7 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800 group-hover:border-slate-300 dark:group-hover:border-slate-700 transition-colors">
             <Image
-              src={user.photoURL}
-              alt={user.displayName || "User avatar"}
+              src={viewer.photoURL}
+              alt={viewer.displayName || "User avatar"}
               fill
               sizes="28px"
               className="object-cover"
@@ -62,12 +68,12 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
 
         <div className="hidden sm:flex flex-col items-start leading-none text-left">
           <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[100px]">
-            {user.displayName || "Active User"}
+            {viewer.displayName || "Active User"}
           </span>
         </div>
 
-        <CaretDown 
-          size={14} 
+        <CaretDown
+          size={14}
           className={`text-slate-400 dark:text-slate-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
@@ -76,11 +82,11 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
         <div className="absolute right-0 mt-2 w-64 origin-top-right rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
           <div className="px-3.5 py-3 border-b border-slate-100 dark:border-slate-800/60 mb-1">
             <div className="flex items-center gap-3">
-              {user.photoURL ? (
+              {viewer.photoURL ? (
                 <div className="relative w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
                   <Image
-                    src={user.photoURL}
-                    alt={user.displayName || "User avatar"}
+                    src={viewer.photoURL}
+                    alt={viewer.displayName || "User avatar"}
                     fill
                     sizes="40px"
                     className="object-cover"
@@ -93,11 +99,11 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
               )}
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
-                  {user.displayName || "User"}
+                  {viewer.displayName || "User"}
                 </span>
                 <span className="text-xs text-slate-400 dark:text-slate-500 truncate flex items-center gap-1">
                   <EnvelopeSimple size={12} className="flex-shrink-0" />
-                  {user.email}
+                  {viewer.email}
                 </span>
               </div>
             </div>
@@ -122,3 +128,4 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
     </div>
   );
 }
+
