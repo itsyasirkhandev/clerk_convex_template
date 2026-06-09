@@ -27,8 +27,8 @@ importers:
         specifier: ^0.1.118
         version: 0.1.118(@standard-schema/spec@1.1.0)(convex@1.40.0(react@19.2.7))(hono@4.12.23)(react@19.2.7)(typescript@6.0.3)(zod@3.25.76)
       effect:
-        specifier: 4.0.0-beta.76
-        version: 4.0.0-beta.76
+        specifier: 4.0.0-beta.78
+        version: 4.0.0-beta.78
       firebase:
         specifier: ^12.14.0
         version: 12.14.0
@@ -2900,8 +2900,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  effect@4.0.0-beta.76:
-    resolution: {integrity: sha512-hiX9cyJni4o7xn1rCYn5ASkLQOYePY23QxvHh5vM9K9cCNauNeXnwufvetXoUVISD/swzBYxGbHUC3rnjqUF+g==}
+  effect@4.0.0-beta.78:
+    resolution: {integrity: sha512-j79Rl9QpHwMz/ZJWLNpZoiVj9N7zHqiLKN5EcYd/A8J1oqejILWQLfc4HPlvqHqKC8SK55LJ+X4gy4ONJ+JpfQ==}
 
   electron-to-chromium@1.5.364:
     resolution: {integrity: sha512-G/dYE3+AYhyHwzTwg8UbnXf7zqMERYh7l2jJ3QujhFsH8agSYwtnGAR2aZ7f0AakIKJXd5En/Hre4igIUrdlYw==}
@@ -7735,7 +7735,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  effect@4.0.0-beta.76:
+  effect@4.0.0-beta.78:
     dependencies:
       '@standard-schema/spec': 1.1.0
       fast-check: 4.8.0

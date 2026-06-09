@@ -1,6 +1,6 @@
 ---
 name: effect-ts
-description: "Write idiomatic Effect v4 TypeScript following official best practices from effect-solutions and the Effect source. Use when writing, reviewing, or refactoring Effect code: services (ServiceMap.Service), layers and dependency injection, error handling (Schema.TaggedErrorClass), data modeling (Schema.Class, branded types, variants), testing (@effect/vitest), HTTP clients (effect/unstable/http), CLI tools (effect/unstable/cli), config, observability, and project setup. Triggers on: 'Effect', 'effect-ts', '@effect/', 'Schema', 'ServiceMap', 'Layer', 'Effect.gen', 'Effect.fn', 'TaggedError', 'branded types', or any Effect-TS related code."
+description: "Write idiomatic Effect v4 TypeScript following official best practices from effect-solutions and the Effect source. Use when writing, reviewing, or refactoring Effect code: services (Context.Service), layers and dependency injection, error handling (Schema.TaggedErrorClass), data modeling (Schema.Class, branded types, variants), testing (@effect/vitest), HTTP clients (effect/unstable/http), CLI tools (effect/unstable/cli), config, observability, and project setup. Triggers on: 'Effect', 'effect-ts', '@effect/', 'Schema', 'Context.Service', 'Layer', 'Effect.gen', 'Effect.fn', 'TaggedError', 'branded types', or any Effect-TS related code."
 ---
 
 # Effect-TS (v4)
@@ -61,18 +61,18 @@ const fetchWithRetry = Effect.fn("fetchWithRetry")(
 )
 ```
 
-## ServiceMap.Service
+## Context.Service
 
 Define services as classes with a unique tag and typed interface:
 
 ```typescript
-import { Effect, ServiceMap } from "effect"
+import { Effect, Context } from "effect"
 
-class Database extends ServiceMap.Service<
+class Database extends Context.Service<
   Database,
   {
-    readonly query: (sql: string) => Effect.Effect<unknown[]>
-    readonly execute: (sql: string) => Effect.Effect<void>
+    readonly query: (sql: string) => Effect.Effect<unknown[], never, never>
+    readonly execute: (sql: string) => Effect.Effect<void, never, never>
   }
 >()("@app/Database") {}
 ```
@@ -80,13 +80,13 @@ class Database extends ServiceMap.Service<
 Implement with `Layer.effect` or `Layer.sync`, using `Effect.fn` for all methods:
 
 ```typescript
-import { Effect, Layer } from "effect"
+import { Effect, Layer, Context } from "effect"
 
-class Users extends ServiceMap.Service<
+class Users extends Context.Service<
   Users,
   {
-    readonly findById: (id: UserId) => Effect.Effect<User, UserNotFoundError>
-    readonly all: () => Effect.Effect<readonly User[]>
+    readonly findById: (id: UserId) => Effect.Effect<User, UserNotFoundError, never>
+    readonly all: () => Effect.Effect<readonly User[], never, never>
   }
 >()("@app/Users") {
   static readonly layer = Layer.effect(
@@ -274,7 +274,7 @@ const program = fetchData.pipe(
 | `Effect.catchAll(() => ...)` losing type info | `Effect.catchTag` / `Effect.catchTags` |
 | `null` / `undefined` in domain types | `Option<T>` with `Option.match` |
 | `Option.getOrThrow(...)` | `Option.match({ onNone, onSome })` or `Option.getOrElse` |
-| `Effect.Service` (v3) | `ServiceMap.Service` (v4) |
+| `Effect.Service` / `ServiceMap.Service` | `Context.Service` (v4) |
 | `Schema.TaggedError<T>()` (v3) | `Schema.TaggedErrorClass("Tag")("Tag", {...})` (v4) |
 | Scatter `Effect.provide` calls | Provide once at app entry |
 | Call parameterized layer constructors inline | Store layers in constants (memoization) |
@@ -283,7 +283,7 @@ const program = fetchData.pipe(
 
 Load these as needed for deeper patterns:
 
-- **[Services & Layers](references/services-and-layers.md)**: ServiceMap.Service, service-driven development, test layers, layer memoization, provide vs provideMerge
+- **[Services & Layers](references/services-and-layers.md)**: Context.Service, service-driven development, test layers, layer memoization, provide vs provideMerge
 - **[Data Modeling](references/data-modeling.md)**: Schema.Class, branded types, variants, Match.valueTags, JSON encoding
 - **[Schema Decisions](references/schema-decisions.md)**: Schema.Class vs Struct vs TaggedClass decision flowchart, migration patterns
 - **[Error Handling](references/error-handling.md)**: Schema.TaggedErrorClass, catch/catchTag/catchTags, defects, Schema.Defect, TypeId/refail patterns

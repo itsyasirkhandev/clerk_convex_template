@@ -178,7 +178,7 @@ Testing the Events service from [services-and-layers.md](services-and-layers.md#
 ### Test layers with in-memory state
 
 ```typescript
-import { Clock, Effect, Layer, Option, Schema, ServiceMap } from "effect"
+import { Clock, Effect, Layer, Option, Schema, Context } from "effect"
 import { describe, expect, it } from "@effect/vitest"
 
 const UserId = Schema.String.pipe(Schema.brand("UserId"))
@@ -212,7 +212,7 @@ class UserNotFound extends Schema.TaggedErrorClass("UserNotFound")(
 ) {}
 
 // Test layers with mutable in-memory state
-class Users extends ServiceMap.Service<Users, {
+class Users extends Context.Service<Users, {
   readonly create: (user: User) => Effect.Effect<void>
   readonly findById: (id: UserId) => Effect.Effect<User, UserNotFound>
 }>()("@app/Users") {
@@ -228,7 +228,7 @@ class Users extends ServiceMap.Service<Users, {
   })
 }
 
-class Tickets extends ServiceMap.Service<Tickets, {
+class Tickets extends Context.Service<Tickets, {
   readonly issue: (eventId: EventId, userId: UserId) => Effect.Effect<Ticket>
 }>()("@app/Tickets") {
   static readonly testLayer = Layer.sync(Tickets, () => {
@@ -242,7 +242,7 @@ class Tickets extends ServiceMap.Service<Tickets, {
   })
 }
 
-class Emails extends ServiceMap.Service<Emails, {
+class Emails extends Context.Service<Emails, {
   readonly send: (email: Email) => Effect.Effect<void>
   readonly sent: Effect.Effect<ReadonlyArray<Email>>
 }>()("@app/Emails") {
@@ -258,7 +258,7 @@ class Emails extends ServiceMap.Service<Emails, {
 ### The orchestration service
 
 ```typescript
-class Events extends ServiceMap.Service<Events, {
+class Events extends Context.Service<Events, {
   readonly register: (eventId: EventId, userId: UserId) => Effect.Effect<Registration, UserNotFound>
 }>()("@app/Events") {
   static readonly layer = Layer.effect(Events, Effect.gen(function* () {

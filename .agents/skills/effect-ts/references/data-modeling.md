@@ -163,16 +163,16 @@ Use the `FromJson` schema (not the base schema) for both decode and encode when 
 
 ```typescript
 // String constraints
-Schema.String.pipe(Schema.minLength(1), Schema.maxLength(255))
+Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(255))
 
 // Number constraints
-Schema.Number.pipe(
-  Schema.check(Schema.isInt()),
-  Schema.check(Schema.isBetween({ minimum: 1, maximum: 100 }))
+Schema.Number.check(
+  Schema.isInt(),
+  Schema.isBetween({ minimum: 1, maximum: 100 })
 )
 
 // Pattern matching
-Schema.String.pipe(Schema.pattern(/^[a-z]+$/))
+Schema.String.check(Schema.isPattern(/^[a-z]+$/))
 
 // Optional fields
 Schema.Struct({

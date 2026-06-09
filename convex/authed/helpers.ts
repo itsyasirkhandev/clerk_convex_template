@@ -5,7 +5,7 @@ import {
 	customQuery
 } from 'convex-helpers/server/customFunctions';
 import { action, mutation, query } from '../_generated/server';
-import { QueryCtx, MutationCtx } from '../_generated/server';
+import { QueryCtx, MutationCtx, ActionCtx } from '../_generated/server';
 import { ConvexError } from 'convex/values';
 import { Effect } from 'effect';
 
@@ -26,22 +26,29 @@ export async function runAuthedEffect<Result, Error>(
 	}
 }
 
+async function requireIdentity(ctx: { auth: { getUserIdentity: () => Promise<any> } }) {
+	const identity = await ctx.auth.getUserIdentity();
+	if (identity === null) {
+		throw new ConvexError({
+			tag: 'UnauthorizedError',
+			data: { message: 'Not authenticated' }
+		});
+	}
+	return identity;
+}
+
+async function getViewer(ctx: QueryCtx | MutationCtx, tokenIdentifier: string) {
+	return await ctx.db
+		.query('users')
+		.withIndex('by_token', (q) => q.eq('tokenIdentifier', tokenIdentifier))
+		.unique();
+}
+
 const authQueryGuard = customCtxAndArgs({
 	args: {},
 	input: async (ctx: QueryCtx) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (identity === null) {
-			throw new ConvexError({
-				tag: 'UnauthorizedError',
-				data: { message: 'Not authenticated' }
-			});
-		}
-
-		const viewer = await ctx.db
-			.query('users')
-			.withIndex('by_token', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
-			.unique();
-
+		const identity = await requireIdentity(ctx);
+		const viewer = await getViewer(ctx, identity.tokenIdentifier);
 		return { ctx: { ...ctx, identity, viewer }, args: {} };
 	}
 });
@@ -49,34 +56,16 @@ const authQueryGuard = customCtxAndArgs({
 const authMutationGuard = customCtxAndArgs({
 	args: {},
 	input: async (ctx: MutationCtx) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (identity === null) {
-			throw new ConvexError({
-				tag: 'UnauthorizedError',
-				data: { message: 'Not authenticated' }
-			});
-		}
-
-		const viewer = await ctx.db
-			.query('users')
-			.withIndex('by_token', (q) => q.eq('tokenIdentifier', identity.tokenIdentifier))
-			.unique();
-
+		const identity = await requireIdentity(ctx);
+		const viewer = await getViewer(ctx, identity.tokenIdentifier);
 		return { ctx: { ...ctx, identity, viewer }, args: {} };
 	}
 });
 
 const authActionGuard = customCtxAndArgs({
 	args: {},
-	input: async (ctx) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (identity === null) {
-			throw new ConvexError({
-				tag: 'UnauthorizedError',
-				data: { message: 'Not authenticated' }
-			});
-		}
-
+	input: async (ctx: ActionCtx) => {
+		const identity = await requireIdentity(ctx);
 		return { ctx: { ...ctx, identity }, args: {} };
 	}
 });

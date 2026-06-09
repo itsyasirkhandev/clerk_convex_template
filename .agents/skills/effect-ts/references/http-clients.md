@@ -172,7 +172,7 @@ const ResilientClient = Layer.effect(
 
 ```typescript
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http"
-import { Effect, Layer, Schema, ServiceMap } from "effect"
+import { Effect, Layer, Schema, Context } from "effect"
 
 const UserId = Schema.Number.pipe(Schema.brand("UserId"))
 type UserId = typeof UserId.Type
@@ -191,7 +191,7 @@ class Repo extends Schema.Class("Repo")({
   stargazers_count: Schema.Number,
 }) {}
 
-class GitHubApi extends ServiceMap.Service<
+class GitHubApi extends Context.Service<
   GitHubApi,
   {
     readonly getUser: (username: string) => Effect.Effect<User>

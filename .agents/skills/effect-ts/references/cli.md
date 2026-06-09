@@ -142,9 +142,9 @@ class TaskList extends Schema.Class("TaskList")({
 ### Service
 
 ```typescript
-import { Effect, FileSystem, Layer, ServiceMap } from "effect"
+import { Effect, FileSystem, Layer, Context } from "effect"
 
-class TaskRepo extends ServiceMap.Service<TaskRepo, {
+class TaskRepo extends Context.Service<TaskRepo, {
   readonly list: (all?: boolean) => Effect.Effect<ReadonlyArray<Task>>
   readonly add: (text: string) => Effect.Effect<Task>
   readonly toggle: (id: TaskId) => Effect.Effect<Option.Option<Task>>

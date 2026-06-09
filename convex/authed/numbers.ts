@@ -9,6 +9,8 @@
 import { v } from 'convex/values';
 import { authedQuery, authedMutation, runAuthedEffect } from './helpers';
 import { Effect } from 'effect';
+import { Numbers } from '../services/Numbers';
+import { ConvexDB } from '../services/ConvexDB';
 
 export const listNumbers = authedQuery({
 	args: {
@@ -21,18 +23,17 @@ export const listNumbers = authedQuery({
 				`Listing ${args.count} numbers for: ${viewerName}`
 			);
 
-			const numbers = yield* Effect.tryPromise(() =>
-				ctx.db
-					.query('numbers')
-					.order('desc')
-					.take(args.count)
-			);
+			const numbersSvc = yield* Numbers;
+			const numbers = yield* numbersSvc.listNumbers(args.count);
 
 			return {
 				viewer: viewerName,
-				numbers: numbers.reverse().map((n) => n.value)
+				numbers
 			};
-		})
+		}).pipe(
+			Effect.provideService(ConvexDB, { db: ctx.db }),
+			Effect.provide(Numbers.layer)
+		)
 	)
 });
 
@@ -47,9 +48,11 @@ export const addNumber = authedMutation({
 				`Adding number ${args.value} for: ${viewerName}`
 			);
 
-			yield* Effect.tryPromise(() =>
-				ctx.db.insert('numbers', { value: args.value })
-			);
-		})
+			const numbersSvc = yield* Numbers;
+			yield* numbersSvc.addNumber(args.value);
+		}).pipe(
+			Effect.provideService(ConvexDB, { db: ctx.db }),
+			Effect.provide(Numbers.layer)
+		)
 	)
 });
