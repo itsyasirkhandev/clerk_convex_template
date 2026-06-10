@@ -1,13 +1,11 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { ConvexProviderWithAuth, ConvexReactClient, useConvexAuth, useMutation } from "convex/react";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { api } from "@/convex/_generated/api";
 
 import { clientConfig } from "@/lib/services/Config";
-
-const convex = new ConvexReactClient(clientConfig.convexUrl);
 
 function UserSyncTrigger() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -29,6 +27,8 @@ export default function ConvexClientProvider({
 }: {
   children: ReactNode;
 }) {
+  const [convex] = useState(() => new ConvexReactClient(clientConfig.convexUrl));
+
   return (
     <ConvexProviderWithAuth client={convex} useAuth={useFirebaseAuth}>
       <UserSyncTrigger />

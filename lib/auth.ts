@@ -10,7 +10,7 @@
 // singleton memoization that would otherwise be repeated at every call site.
 
 import { getAuth, type Auth } from "firebase/auth";
-import app from "../firebaseConfig";
+import { getFirebaseApp } from "../firebaseConfig";
 
 let _auth: Auth | null = null;
 
@@ -20,7 +20,7 @@ let _auth: Auth | null = null;
  */
 export function getFirebaseAuth(): Auth {
   if (!_auth) {
-    _auth = getAuth(app);
+    _auth = getAuth(getFirebaseApp());
   }
   return _auth;
 }

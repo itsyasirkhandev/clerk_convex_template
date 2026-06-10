@@ -57,9 +57,7 @@ export const effectPrivateQuery = <Args extends PropertyValidators, R, E>(option
 		// @ts-expect-error - Convex customQuery generic wrapper TS mismatch
 		handler: async (ctx, args) => {
 			return runPrivateEffect(
-				Effect.gen(function* () {
-					return yield* options.handler(args as unknown as ObjectType<Args>);
-				}).pipe(
+				options.handler(args as unknown as ObjectType<Args>).pipe(
 					Effect.provideService(ConvexDB, { db: ctx.db })
 				)
 			) as Promise<R>;
@@ -76,9 +74,7 @@ export const effectPrivateMutation = <Args extends PropertyValidators, R, E>(opt
 		// @ts-expect-error - Convex customQuery generic wrapper TS mismatch
 		handler: async (ctx, args) => {
 			return runPrivateEffect(
-				Effect.gen(function* () {
-					return yield* options.handler(args as unknown as ObjectType<Args>);
-				}).pipe(
+				options.handler(args as unknown as ObjectType<Args>).pipe(
 					Effect.provideService(ConvexDB, { db: ctx.db })
 				)
 			) as Promise<R>;
@@ -95,9 +91,7 @@ export const effectPrivateAction = <Args extends PropertyValidators, R, E>(optio
 		// @ts-expect-error - Convex customQuery generic wrapper TS mismatch
 		handler: async (ctx, args) => {
 			return runPrivateEffect(
-				Effect.gen(function* () {
-					return yield* options.handler(args as unknown as ObjectType<Args>);
-				})
+				options.handler(args as unknown as ObjectType<Args>)
 			) as Promise<R>;
 		}
 	});

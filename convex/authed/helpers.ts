@@ -92,9 +92,7 @@ export const effectAuthedQuery = <Args extends PropertyValidators, R, E>(options
 		// @ts-expect-error - Convex customQuery generic wrapper TS mismatch
 		handler: async (ctx, args) => {
 			return runAuthedEffect(
-				Effect.gen(function* () {
-					return yield* options.handler(args as unknown as ObjectType<Args>);
-				}).pipe(
+				options.handler(args as unknown as ObjectType<Args>).pipe(
 					Effect.provideService(AuthedContext, { identity: ctx.identity, viewer: ctx.viewer }),
 					Effect.provideService(ConvexDB, { db: ctx.db })
 				)
@@ -112,9 +110,7 @@ export const effectAuthedMutation = <Args extends PropertyValidators, R, E>(opti
 		// @ts-expect-error - Convex customQuery generic wrapper TS mismatch
 		handler: async (ctx, args) => {
 			return runAuthedEffect(
-				Effect.gen(function* () {
-					return yield* options.handler(args as unknown as ObjectType<Args>);
-				}).pipe(
+				options.handler(args as unknown as ObjectType<Args>).pipe(
 					Effect.provideService(AuthedContext, { identity: ctx.identity, viewer: ctx.viewer }),
 					Effect.provideService(ConvexDB, { db: ctx.db })
 				)
@@ -132,9 +128,7 @@ export const effectAuthedAction = <Args extends PropertyValidators, R, E>(option
 		// @ts-expect-error - Convex customQuery generic wrapper TS mismatch
 		handler: async (ctx, args) => {
 			return runAuthedEffect(
-				Effect.gen(function* () {
-					return yield* options.handler(args as unknown as ObjectType<Args>);
-				}).pipe(
+				options.handler(args as unknown as ObjectType<Args>).pipe(
 					Effect.provideService(AuthedContext, { identity: ctx.identity, viewer: null })
 				)
 			) as Promise<R>;
