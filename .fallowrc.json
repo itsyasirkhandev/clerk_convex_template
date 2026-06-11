@@ -10,8 +10,8 @@
     "convex-test"
   ],
   "health": {
-    "maxCrap": 250.0,
-    "maxCognitive": 25.0
+    "maxCrap": 250,
+    "maxCognitive": 25
   },
   "duplicates": {
     "minOccurrences": 2
