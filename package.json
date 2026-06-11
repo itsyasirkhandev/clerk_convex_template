@@ -20,8 +20,8 @@
     "@phosphor-icons/react": "^2.1.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "convex": "^1.36.1",
-    "convex-helpers": "^0.1.118",
+    "convex": "^1.41.0",
+    "convex-helpers": "^0.1.119",
     "effect": "4.0.0-beta.78",
     "immer": "^11.1.8",
     "next": "16.2.4",
@@ -38,7 +38,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@convex-dev/eslint-plugin": "^1.2.2",
+    "@convex-dev/eslint-plugin": "^2.0.0",
     "@effect/language-service": "^0.86.2",
     "@tailwindcss/postcss": "^4.2.2",
     "@testing-library/dom": "^10.4.1",
