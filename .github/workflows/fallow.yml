@@ -1,28 +1,26 @@
-name: Fallow Codebase Intelligence
+name: Fallow Audit
 
 on:
-  pull_request:
-    branches: [main, master]
   push:
     branches: [main, master]
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  pull_request:
 
 jobs:
-  fallow-audit:
-    name: Fallow Audit
+  audit:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required for delta analysis (changed files)
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
-      - name: Install pnpm
+
+      - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
@@ -31,4 +29,4 @@ jobs:
         run: pnpm install
 
       - name: Run Fallow Audit
-        run: pnpm run fallow:audit --ci
+        run: npx fallow audit --ci --fail-on-issues
